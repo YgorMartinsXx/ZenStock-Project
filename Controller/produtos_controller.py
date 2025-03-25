@@ -1,56 +1,71 @@
 from flask import jsonify
-from Mocks.produtos_mock import produtos_dict # deverá ser substituído futuramente pelos dados do banco de dados
+from Model.classe_produtos import Produto
+from database_connection import db # Será necessário refazer a conexão SQL do arquivo mencionado
 
 def buscar_produtos(args):
-    """Busca produtos por categoria, ID ou nome."""
+    """Busca produtos por categoria, ID, nome, ou preço."""
 
-    if not produtos_dict:
-        return jsonify({'message': 'A lista de produtos está vazia.'}), 404
-    
-    categoria = args.get('categoria')
+    # Filtro de busca inicial: todos os produtos
+    query = Produto.query
+
+    # Filtro por ID
     id = args.get('id')
-    nome = args.get('nome')
-    preco_minimo = args.get('preco_minimo')
-    preco_maximo = args.get('preco_maximo')
-    preco_crescente = args.get('preco')
-
-    resultados = list(produtos_dict.values())
-
-    # Caso um ID seja fornecido, busca diretamente pelo identificador único
     if id:
         if not id.isdigit():
             return jsonify({'message': 'O ID fornecido deve ser um número inteiro.'}), 400
         
-        id = int(id)
-        produto = next((p for p in produtos_dict.values() if p['cod_produto'] == id), None)
-        if produto: return jsonify(produto)
-        else: return jsonify({'message': 'Nenhum produto encontrado com os parâmetros informados.'}), 404
+        produto = Produto.query.get(id)
+        if produto:
+            return jsonify(produto.to_dict())  # Converte o produto para dicionário e retorna como JSON
+        else:
+            return jsonify({'message': 'Nenhum produto encontrado com o ID fornecido.'}), 404
 
-    try:
-        # Filtros de limites de preço
-        if preco_minimo:
-            preco_minimo = float(preco_minimo)
-            resultados = [produto for produto in resultados if produto['preco_unitario'] >= preco_minimo]
-        if preco_maximo:
-            preco_maximo = float(preco_maximo)
-            resultados = [produto for produto in resultados if produto['preco_unitario'] <= preco_maximo]
-        # Filtro de ordenação por preço
-        if preco_crescente:
-            resultados.sort(key=lambda p: p['preco_unitario'], reverse=preco_crescente.lower() == 'false')
-    except ValueError:
-        return jsonify({'message': 'Filtros de preço inválidos.'}), 400
-
-    # Aplicação de filtros por categoria e nome sem quebrar outros filtros
+    # Filtro por categoria
+    categoria = args.get('categoria')
     if categoria:
         if categoria.isdigit():
             return jsonify({'message': 'A categoria deve ser uma string.'}), 400
-        resultados = [p for p in resultados if p['categoria'] == categoria]
+        query = query.filter(Produto.categoria == categoria)
+
+    # Filtro por nome
+    nome = args.get('nome')
     if nome:
         if nome.isdigit():
             return jsonify({'message': 'O nome fornecido deve ser uma string.'}), 400
-        resultados = [p for p in resultados if p['nome'] == nome]
+        query = query.filter(Produto.nome_produto.like(f"%{nome}%"))
 
-    if resultados:
-        return jsonify(resultados)
+    # Filtro por preço (mínimo e máximo)
+    preco_minimo = args.get('preco_minimo')
+    if preco_minimo:
+        try:
+            preco_minimo = float(preco_minimo)
+            query = query.filter(Produto.preco_unitario >= preco_minimo)
+        except ValueError:
+            return jsonify({'message': 'Preço mínimo inválido.'}), 400
+
+    preco_maximo = args.get('preco_maximo')
+    if preco_maximo:
+        try:
+            preco_maximo = float(preco_maximo)
+            query = query.filter(Produto.preco_unitario <= preco_maximo)
+        except ValueError:
+            return jsonify({'message': 'Preço máximo inválido.'}), 400
+
+    # Filtro por ordenação (preço crescente ou decrescente)
+    preco_crescente = args.get('preco')
+    if preco_crescente:
+        if preco_crescente.lower() == 'true':
+            query = query.order_by(Produto.preco_unitario.asc())  # Ordena de forma crescente
+        elif preco_crescente.lower() == 'false':
+            query = query.order_by(Produto.preco_unitario.desc())  # Ordena de forma decrescente
+        else:
+            return jsonify({'message': 'Valor inválido para ordenação de preço.'}), 400
+
+    # Executa a consulta e converte os resultados para uma lista
+    produtos = query.all()
+
+    if produtos:
+        # Converte cada produto em um dicionário e retorna como JSON
+        return jsonify([produto.to_dict() for produto in produtos])
     else:
         return jsonify({'message': 'Nenhum produto encontrado com os parâmetros informados.'}), 404
