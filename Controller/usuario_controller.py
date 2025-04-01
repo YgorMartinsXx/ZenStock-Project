@@ -29,17 +29,17 @@ def Buscar_usuario(login_usuario):
         session.close()
 
 
-def criar_pedido(login_usuario, senha, cargo):
+def criar_usuario(login_usuario, senha, cargo):
     session = Session()
     try:
         
         # verifica se o usuario já existe no sistema.
         usuario = session.query(Usuarios).filter_by(login=login_usuario).first()
-        if not usuario:
+        if usuario:
             return {"erro": "Login em Uso."}, 400
 
         # Verifica se o cargo corresponde as opções
-        if cargo != "Estoquista" or 'Administrador':
+        if cargo != "Estoquista" and cargo != 'Administrador':
             return {"erro": "cargo não corresponde a nenhuma opção possivel. tente um cargo válido"}
 
         # Criar um novo usuario
@@ -99,15 +99,17 @@ def alterar_senha(login_usuario, nova_senha):
         # Buscar o login do usuario.
         usuario = session.query(Usuarios).filter_by(login = login_usuario).first()
         if not usuario:
-            return {"erro": "Usuario não encontrado"}, 404
+            return {"erro": "Usuário não encontrado."}, 404
         
         # Salva as mudanças no banco
         usuario.senha = nova_senha
         session.commit()
 
-    except:
+        return {"mensagem": "Senha alterada com sucesso."}, 200
+
+    except Exception as e:
         session.rollback()
-        return {"erro": "Erro, tente novamente"}, 500
-    
+        return {"erro": f"Erro: {str(e)}"}, 500
+
     finally:
         session.close()
