@@ -1,11 +1,9 @@
-
-
 from sqlalchemy import (
     Column,
     Integer,
     String,
     DateTime,
-    ForeignKey,
+    ForeignKey
 )
 from sqlalchemy.orm import declarative_base
 
