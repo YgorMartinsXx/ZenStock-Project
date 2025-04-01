@@ -1,11 +1,6 @@
 from sqlalchemy import (
     Column,
-    Integer,
-    String,
-    DateTime,
-    ForeignKey,
-    DECIMAL,
-    CheckConstraint
+    String
 )
 from sqlalchemy.orm import declarative_base
 
@@ -19,3 +14,5 @@ class Fornecedores(Base):
     endereco = Column(String(40), nullable=False)
     email = Column(String(40), nullable=False)
     telefone = Column(String(11), nullable=False)
+
+    
