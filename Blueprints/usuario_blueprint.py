@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from Controller.usuario_controller import Buscar_usuario, criar_pedido, deleta_usuario, alterar_senha
+from Controller.usuario_controller import Buscar_usuario, criar_usuario, deleta_usuario, alterar_senha
 
 usuarios_bp = Blueprint('usuarios', __name__, url_prefix='/usuarios')
 
@@ -19,7 +19,7 @@ def post_usuario():
     if not login_usuario or not senha or not cargo:
         return jsonify({"erro": "Todos os campos são obrigatórios."}), 400
     
-    return criar_pedido(login_usuario, senha, cargo)
+    return criar_usuario(login_usuario, senha, cargo)
 
 # Rota para deletar um usuário pelo login
 @usuarios_bp.route('/<login_usuario>', methods=['DELETE'])
