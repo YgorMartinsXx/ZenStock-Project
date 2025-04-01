@@ -28,10 +28,10 @@ create table PEDIDOS (
 );
 
 create table FORNECE(
-	id_pedido 		INT,
-	cnpj_fornecedor CHAR(14),
-	cod_produto 	INT,
-	quantidade 		INT,
+	id_pedido 		INT primary key,
+	cnpj_fornecedor CHAR(14) not null,
+	cod_produto 	INT not null,
+	quantidade 		INT not null,
 	
 	constraint fkFornece_Produto 	 FOREIGN KEY(cod_produto)	  references PRODUTOS(cod_produto)
      	on delete cascade
