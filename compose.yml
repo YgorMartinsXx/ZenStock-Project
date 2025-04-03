@@ -1,0 +1,23 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        USUARIO: root
+        SENHA: senha123
+        HOST: host.docker.internal
+        PORTA_MYSQL: 3306
+        BANCO_DE_DADOS: ZenStock
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app
+    environment:
+      - USUARIO=root
+      - SENHA=senha123
+      - HOST=host.docker.internal
+      - PORTA_MYSQL=3306
+      - BANCO_DE_DADOS=ZenStock
+      - FLASK_APP=app.py
+      - FLASK_RUN_HOST=0.0.0.0
