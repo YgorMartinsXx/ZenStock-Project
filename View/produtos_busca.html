@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Buscar Produtos</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <a href="produtos_index.html">Voltar</a>
+    <a id="url_main" href="index.html">Página inicial</a>
+    <div class="search">
+        <h1>Buscar Produtos</h1>
+    
+        <form id="search-form">
+    
+            <label for="cod_produto">Código do Produto:</label>
+            <input type="number" id="cod_produto" name="cod_produto"><hr>
+    
+            <label for="categoria">Categoria:</label>
+            <input type="text" id="categoria" name="categoria"><hr>
+            
+            <label for="nome_produto">Nome do Produto:</label>
+            <input type="text" id="nome_produto" name="nome_produto"><hr>
+    
+            <label for="preco_minimo">Preço Mínimo:</label>
+            <input type="number" id="preco_minimo" name="preco_minimo"><hr>
+    
+            <label for="preco_maximo">Preço Máximo:</label>
+            <input type="number" id="preco_maximo" name="preco_maximo"><hr>
+    
+            <label for="ordenacao_preco">Ordenação de Preço:</label>
+            <select id="ordenacao_preco" name="ordenacao_preco">
+                <option value="crescente">Crescente</option>
+                <option value="decrescente">Decrescente</option>
+            </select><hr>
+    
+            <button type="submit">Buscar</button>
+        </form>
+    </div>
+    <div id="results"></div>
+    <script src="script_busca.js"></script>
+</body>
+</html>
