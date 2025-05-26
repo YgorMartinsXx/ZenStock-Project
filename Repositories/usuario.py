@@ -3,6 +3,36 @@ from database_connection import Session
 from Model.classe_usuarios import Usuarios
 
 
+def login_usuario(login_usuario, senha):
+    session = Session()
+
+    try:
+        # Buscar usuário pelo login
+        usuario = session.query(Usuarios).filter_by(login=login_usuario).first()
+
+        if not usuario:
+            return {"erro": "Usuário não encontrado."}, 404
+
+        # Verifica a senha (simples, sem hash ainda)
+        if usuario.senha != senha:
+            return {"erro": "Senha incorreta."}, 401
+
+        # Retorna os dados do usuário autenticado
+        usuario_json = {
+            "mensagem": "Login realizado com sucesso!",
+            "login": usuario.login,
+            "cargo": usuario.cargo
+        }
+
+        return usuario_json, 200
+
+    except Exception as e:
+        return {"erro": f"Erro no login: {str(e)}"}, 500
+
+    finally:
+        session.close()
+
+
 def Buscar_usuario(login_usuario):
     session = Session()
 
