@@ -1,186 +1,194 @@
 from database_connection import Session
 from Model.classe_movimenta import Movimenta
 
-def buscar_movimentacao(id_pesquisado):
-    session = Session()
-    try:
-        movimentacao = session.query(Movimenta).filter_by(id_movimentacao=int(id_pesquisado)).first()
 
-        if not movimentacao:
-            return {"erro": "Movimentação não encontrada."}, 404
+class GerenciadorMovimentacoes:
+    """
+    Classe responsável pelas operações relacionadas à entidade 'Movimenta'.
+    Inclui funcionalidades de criação, leitura, atualização e exclusão.
+    """
 
-        movimentacao_json = {
-            "id_movimentacao": movimentacao.id_movimentacao,
-            "evento": movimentacao.evento,
-            "quantidade": movimentacao.quantidade,
-            "data_movimentacao": movimentacao.data_movimentacao.isoformat() if movimentacao.data_movimentacao else None,
-            "cod_produto": movimentacao.cod_produto,
-            "usuario": movimentacao.usuario
-        }
+    @staticmethod
+    def buscar_movimentacao(id_pesquisado):
+        session = Session()
+        try:
+            movimentacao = session.query(Movimenta).filter_by(id_movimentacao=int(id_pesquisado)).first()
 
-        return movimentacao_json, 200
+            if not movimentacao:
+                return {"erro": "Movimentação não encontrada."}, 404
 
-    except Exception as e:
-        return {"erro": f"Erro inesperado: {str(e)}"}, 500
-
-    finally:
-        session.close()
-
-
-def todas_movimentacoes():
-    session = Session()
-    try:
-        movimentacoes = session.query(Movimenta).all()
-
-        if not movimentacoes:
-            return {"erro": "Nenhuma movimentação encontrada."}, 404
-
-        movimentacoes_json = [
-            {
-                "id_movimentacao": m.id_movimentacao,
-                "evento": m.evento,
-                "quantidade": m.quantidade,
-                "data_movimentacao": m.data_movimentacao.isoformat() if m.data_movimentacao else None,
-                "cod_produto": m.cod_produto,
-                "usuario": m.usuario
+            movimentacao_json = {
+                "id_movimentacao": movimentacao.id_movimentacao,
+                "evento": movimentacao.evento,
+                "quantidade": movimentacao.quantidade,
+                "data_movimentacao": movimentacao.data_movimentacao.isoformat() if movimentacao.data_movimentacao else None,
+                "cod_produto": movimentacao.cod_produto,
+                "usuario": movimentacao.usuario
             }
-            for m in movimentacoes
-        ]
 
-        return movimentacoes_json, 200
+            return movimentacao_json, 200
 
-    except Exception as e:
-        return {"erro": f"Erro inesperado: {str(e)}"}, 500
+        except Exception as e:
+            return {"erro": f"Erro inesperado: {str(e)}"}, 500
 
-    finally:
-        session.close()
+        finally:
+            session.close()
 
+    @staticmethod
+    def todas_movimentacoes():
+        session = Session()
+        try:
+            movimentacoes = session.query(Movimenta).all()
 
-def movimentacoes_por_produto(cod_produto):
-    session = Session()
-    try:
-        movimentacoes = session.query(Movimenta).filter_by(cod_produto=int(cod_produto)).all()
+            if not movimentacoes:
+                return {"erro": "Nenhuma movimentação encontrada."}, 404
 
-        if not movimentacoes:
-            return {"erro": "Nenhuma movimentação encontrada para este produto."}, 404
+            movimentacoes_json = [
+                {
+                    "id_movimentacao": m.id_movimentacao,
+                    "evento": m.evento,
+                    "quantidade": m.quantidade,
+                    "data_movimentacao": m.data_movimentacao.isoformat() if m.data_movimentacao else None,
+                    "cod_produto": m.cod_produto,
+                    "usuario": m.usuario
+                }
+                for m in movimentacoes
+            ]
 
-        movimentacoes_json = [
-            {
-                "id_movimentacao": m.id_movimentacao,
-                "evento": m.evento,
-                "quantidade": m.quantidade,
-                "data_movimentacao": m.data_movimentacao.isoformat() if m.data_movimentacao else None,
-                "cod_produto": m.cod_produto,
-                "usuario": m.usuario
-            }
-            for m in movimentacoes
-        ]
+            return movimentacoes_json, 200
 
-        return movimentacoes_json, 200
+        except Exception as e:
+            return {"erro": f"Erro inesperado: {str(e)}"}, 500
 
-    except Exception as e:
-        return {"erro": f"Erro inesperado: {str(e)}"}, 500
+        finally:
+            session.close()
 
-    finally:
-        session.close()
+    @staticmethod
+    def movimentacoes_por_produto(cod_produto):
+        session = Session()
+        try:
+            movimentacoes = session.query(Movimenta).filter_by(cod_produto=int(cod_produto)).all()
 
+            if not movimentacoes:
+                return {"erro": "Nenhuma movimentação encontrada para este produto."}, 404
 
-def movimentacoes_por_usuario(usuario):
-    session = Session()
-    try:
-        movimentacoes = session.query(Movimenta).filter_by(usuario=usuario).all()
+            movimentacoes_json = [
+                {
+                    "id_movimentacao": m.id_movimentacao,
+                    "evento": m.evento,
+                    "quantidade": m.quantidade,
+                    "data_movimentacao": m.data_movimentacao.isoformat() if m.data_movimentacao else None,
+                    "cod_produto": m.cod_produto,
+                    "usuario": m.usuario
+                }
+                for m in movimentacoes
+            ]
 
-        if not movimentacoes:
-            return {"erro": "Nenhuma movimentação encontrada para este usuário."}, 404
+            return movimentacoes_json, 200
 
-        movimentacoes_json = [
-            {
-                "id_movimentacao": m.id_movimentacao,
-                "evento": m.evento,
-                "quantidade": m.quantidade,
-                "data_movimentacao": m.data_movimentacao.isoformat() if m.data_movimentacao else None,
-                "cod_produto": m.cod_produto,
-                "usuario": m.usuario
-            }
-            for m in movimentacoes
-        ]
+        except Exception as e:
+            return {"erro": f"Erro inesperado: {str(e)}"}, 500
 
-        return movimentacoes_json, 200
+        finally:
+            session.close()
 
-    except Exception as e:
-        return {"erro": f"Erro inesperado: {str(e)}"}, 500
+    @staticmethod
+    def movimentacoes_por_usuario(usuario):
+        session = Session()
+        try:
+            movimentacoes = session.query(Movimenta).filter_by(usuario=usuario).all()
 
-    finally:
-        session.close()
+            if not movimentacoes:
+                return {"erro": "Nenhuma movimentação encontrada para este usuário."}, 404
 
+            movimentacoes_json = [
+                {
+                    "id_movimentacao": m.id_movimentacao,
+                    "evento": m.evento,
+                    "quantidade": m.quantidade,
+                    "data_movimentacao": m.data_movimentacao.isoformat() if m.data_movimentacao else None,
+                    "cod_produto": m.cod_produto,
+                    "usuario": m.usuario
+                }
+                for m in movimentacoes
+            ]
 
-def criar_movimentacao(evento, quantidade, cod_produto, usuario, data_movimentacao=None):
-    session = Session()
-    try:
-        nova_movimentacao = Movimenta(
-            evento=evento,
-            quantidade=quantidade,
-            cod_produto=cod_produto,
-            usuario=usuario,
-            data_movimentacao=data_movimentacao  # pode ser None, aí o default do BD ou SQLAlchemy entra
-        )
-        session.add(nova_movimentacao)
-        session.commit()
-        return {"mensagem": "Movimentação criada com sucesso.", "id_movimentacao": nova_movimentacao.id_movimentacao}, 201
+            return movimentacoes_json, 200
 
-    except Exception as e:
-        session.rollback()
-        return {"erro": f"Erro inesperado: {str(e)}"}, 500
+        except Exception as e:
+            return {"erro": f"Erro inesperado: {str(e)}"}, 500
 
-    finally:
-        session.close()
+        finally:
+            session.close()
 
+    @staticmethod
+    def criar_movimentacao(evento, quantidade, cod_produto, usuario, data_movimentacao=None):
+        session = Session()
+        try:
+            nova_movimentacao = Movimenta(
+                evento=evento,
+                quantidade=quantidade,
+                cod_produto=cod_produto,
+                usuario=usuario,
+                data_movimentacao=data_movimentacao
+            )
+            session.add(nova_movimentacao)
+            session.commit()
+            return {"mensagem": "Movimentação criada com sucesso.", "id_movimentacao": nova_movimentacao.id_movimentacao}, 201
 
-def editar_movimentacao(id_movimentacao, novo_evento=None, nova_quantidade=None, novo_cod_produto=None, novo_usuario=None, nova_data_movimentacao=None):
-    session = Session()
-    try:
-        movimentacao = session.query(Movimenta).filter_by(id_movimentacao=int(id_movimentacao)).first()
+        except Exception as e:
+            session.rollback()
+            return {"erro": f"Erro inesperado: {str(e)}"}, 500
 
-        if not movimentacao:
-            return {"erro": "Movimentação não encontrada."}, 404
+        finally:
+            session.close()
 
-        if novo_evento is not None:
-            movimentacao.evento = novo_evento
-        if nova_quantidade is not None:
-            movimentacao.quantidade = nova_quantidade
-        if novo_cod_produto is not None:
-            movimentacao.cod_produto = novo_cod_produto
-        if novo_usuario is not None:
-            movimentacao.usuario = novo_usuario
-        if nova_data_movimentacao is not None:
-            movimentacao.data_movimentacao = nova_data_movimentacao
+    @staticmethod
+    def editar_movimentacao(id_movimentacao, novo_evento=None, nova_quantidade=None, novo_cod_produto=None, novo_usuario=None, nova_data_movimentacao=None):
+        session = Session()
+        try:
+            movimentacao = session.query(Movimenta).filter_by(id_movimentacao=int(id_movimentacao)).first()
 
-        session.commit()
-        return {"mensagem": "Movimentação atualizada com sucesso."}, 200
+            if not movimentacao:
+                return {"erro": "Movimentação não encontrada."}, 404
 
-    except Exception as e:
-        session.rollback()
-        return {"erro": f"Erro inesperado: {str(e)}"}, 500
+            if novo_evento is not None:
+                movimentacao.evento = novo_evento
+            if nova_quantidade is not None:
+                movimentacao.quantidade = nova_quantidade
+            if novo_cod_produto is not None:
+                movimentacao.cod_produto = novo_cod_produto
+            if novo_usuario is not None:
+                movimentacao.usuario = novo_usuario
+            if nova_data_movimentacao is not None:
+                movimentacao.data_movimentacao = nova_data_movimentacao
 
-    finally:
-        session.close()
+            session.commit()
+            return {"mensagem": "Movimentação atualizada com sucesso."}, 200
 
+        except Exception as e:
+            session.rollback()
+            return {"erro": f"Erro inesperado: {str(e)}"}, 500
 
-def deletar_movimentacao(id_movimentacao):
-    session = Session()
-    try:
-        movimentacao = session.query(Movimenta).filter_by(id_movimentacao=int(id_movimentacao)).first()
+        finally:
+            session.close()
 
-        if not movimentacao:
-            return {"erro": "Movimentação não encontrada."}, 404
+    @staticmethod
+    def deletar_movimentacao(id_movimentacao):
+        session = Session()
+        try:
+            movimentacao = session.query(Movimenta).filter_by(id_movimentacao=int(id_movimentacao)).first()
 
-        session.delete(movimentacao)
-        session.commit()
-        return {"mensagem": "Movimentação deletada com sucesso."}, 200
+            if not movimentacao:
+                return {"erro": "Movimentação não encontrada."}, 404
 
-    except Exception as e:
-        session.rollback()
-        return {"erro": f"Erro inesperado: {str(e)}"}, 500
+            session.delete(movimentacao)
+            session.commit()
+            return {"mensagem": "Movimentação deletada com sucesso."}, 200
 
-    finally:
-        session.close()
+        except Exception as e:
+            session.rollback()
+            return {"erro": f"Erro inesperado: {str(e)}"}, 500
+
+        finally:
+            session.close()

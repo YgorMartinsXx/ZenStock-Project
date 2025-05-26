@@ -1,17 +1,12 @@
 from flask import Blueprint, request, jsonify
-from Repositories.usuario import (
-    Buscar_usuario,
-    criar_usuario,
-    deleta_usuario,
-    alterar_senha,
-    login_usuario
-)
+from Repositories.usuario import GerenciadorUsuarios
 
 usuarios_bp = Blueprint('usuarios', __name__, url_prefix='/usuarios')
 
 @usuarios_bp.route('/<login_usuario>', methods=['GET'])
 def get_usuario(login_usuario):
-    return Buscar_usuario(login_usuario)
+    resposta, status = GerenciadorUsuarios.buscar_usuario(login_usuario)
+    return jsonify(resposta), status
 
 @usuarios_bp.route('/', methods=['POST'])
 def post_usuario():
@@ -23,11 +18,13 @@ def post_usuario():
     if not login_usuario or not senha or not cargo:
         return jsonify({"erro": "Todos os campos são obrigatórios."}), 400
 
-    return criar_usuario(login_usuario, senha, cargo)
+    resposta, status = GerenciadorUsuarios.criar_usuario(login_usuario, senha, cargo)
+    return jsonify(resposta), status
 
 @usuarios_bp.route('/<login_usuario>', methods=['DELETE'])
 def delete_usuario(login_usuario):
-    return deleta_usuario(login_usuario)
+    resposta, status = GerenciadorUsuarios.deleta_usuario(login_usuario)
+    return jsonify(resposta), status
 
 @usuarios_bp.route('/alterar_senha', methods=['PUT'])
 def put_senha():
@@ -38,7 +35,8 @@ def put_senha():
     if not login_usuario or not nova_senha:
         return jsonify({"erro": "Login e nova senha são obrigatórios."}), 400
 
-    return alterar_senha(login_usuario, nova_senha)
+    resposta, status = GerenciadorUsuarios.alterar_senha(login_usuario, nova_senha)
+    return jsonify(resposta), status
 
 @usuarios_bp.route('/login', methods=['POST'])
 def post_login():
@@ -49,4 +47,5 @@ def post_login():
     if not login or not senha:
         return jsonify({"erro": "Login e senha são obrigatórios."}), 400
 
-    return login_usuario(login, senha)
+    resposta, status = GerenciadorUsuarios.login_usuario(login, senha)
+    return jsonify(resposta), status
