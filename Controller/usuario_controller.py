@@ -31,6 +31,7 @@ def Buscar_usuario(login_usuario):
 
 def criar_usuario(login_usuario, senha, cargo):
     session = Session()
+    cargos = ['Estoquista', 'Administrador']
     try:
         
         # verifica se o usuario já existe no sistema.
@@ -39,7 +40,7 @@ def criar_usuario(login_usuario, senha, cargo):
             return {"erro": "Login em Uso."}, 400
 
         # Verifica se o cargo corresponde as opções
-        if cargo != "Estoquista" and cargo != 'Administrador':
+        if cargo not in cargos:
             return {"erro": "cargo não corresponde a nenhuma opção possivel. tente um cargo válido"}
 
         # Criar um novo usuario
@@ -77,7 +78,7 @@ def deleta_usuario(login_usuario):
         # Builda o formato a ser devolvido pela rota.
         fornecimento_json = [{
              "Mensagem": "Usuario deletado com Sucesso!",
-             "login": usuario.login, 
+             "login": usuario.login,
              "cargo": usuario.cargo
 
              }]

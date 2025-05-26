@@ -4,7 +4,7 @@ from Model.classe_fornecedores import Fornecedores
 from Model.classe_fornece import Fornece
 
 
-def buscar_fornecimento(id_pesquisado):
+def buscar_fornecimento(id_pesquisado:int):
     session = Session()
 
     try:
