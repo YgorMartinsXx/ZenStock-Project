@@ -1,6 +1,6 @@
 import unittest
 from flask import Flask
-from Blueprints.produtos_blueprint import produtos_bp
+from Controller.produtos import produtos_bp
 from Mocks.produtos_mock import produtos_dict
 
 class TestBuscarProdutos(unittest.TestCase):
