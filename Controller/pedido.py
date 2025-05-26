@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from Repositories.pedido import criar_pedido, excluir_pedido, buscar_pedido, todos_pedidos
+from Repositories.pedido import GerenciadorPedidos
 
 # Criando a Blueprint para pedidos
 pedidos_bp = Blueprint('pedidos', __name__, url_prefix='/pedidos')
@@ -7,12 +7,14 @@ pedidos_bp = Blueprint('pedidos', __name__, url_prefix='/pedidos')
 # Rota para buscar todos os pedidos
 @pedidos_bp.route('/', methods=['GET'])
 def get_pedidos():
-    return todos_pedidos()
+    resultado, status = GerenciadorPedidos.todos_pedidos()
+    return jsonify(resultado), status
 
 # Rota para buscar um pedido específico
 @pedidos_bp.route('/<int:id_pedido>', methods=['GET'])
 def get_pedido(id_pedido):
-    return buscar_pedido(id_pedido)
+    resultado, status = GerenciadorPedidos.buscar_pedido(id_pedido)
+    return jsonify(resultado), status
 
 # Rota para criar um novo pedido
 @pedidos_bp.route('/', methods=['POST'])
@@ -26,9 +28,13 @@ def post_pedido():
     quantidade_fornecida = data.get('quantidade')
     login_usuario = data.get('usuario')
 
-    return criar_pedido(cnpj_fornecedor, cod_produto, quantidade_fornecida, login_usuario)
+    resultado, status = GerenciadorPedidos.criar_pedido(
+        cnpj_fornecedor, cod_produto, quantidade_fornecida, login_usuario
+    )
+    return jsonify(resultado), status
 
 # Rota para excluir um pedido
 @pedidos_bp.route('/excluir/<int:id_pedido>', methods=['DELETE'])
 def delete_pedido(id_pedido):
-    return excluir_pedido(id_pedido)
+    resultado, status = GerenciadorPedidos.excluir_pedido(id_pedido)
+    return jsonify(resultado), status
